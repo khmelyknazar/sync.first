@@ -1,0 +1,337 @@
+/**
+ * Axioma Design Tokens — v2 (Dark-First / Premium Technical)
+ * Three-layer architecture: Primitive → Semantic (Alias) → Component.
+ * Never reference a primitive directly from a component — go through
+ * the semantic layer so theming (dark/light) stays a one-place change.
+ *
+ * v2 direction change: dark is now the DEFAULT theme (`:root`), light
+ * is the override (`[data-theme="light"]`) — reversed from v1, where
+ * light was default. Every token NAME from v1 is preserved exactly;
+ * no consumer (component, Tailwind bridge, shadcn bridge) needed to
+ * change for this pass. What changed: which values live under `:root`
+ * vs the override block, the graphite scale's darkest steps (now
+ * navy-tinted, not flat gray), the primary accent (more saturated
+ * "electric" blue), and two new token families — Glow and Glass —
+ * used sparingly per the brief ("subtle gradients, glow and
+ * reflections... glass only where it actually improves composition").
+ */
+
+/* ------------------------------------------------------------------ */
+/* 1. PRIMITIVE LAYER — raw values, no meaning of use                 */
+/* ------------------------------------------------------------------ */
+:root {
+  /* Graphite (neutral) — v2: darkest steps carry a deliberate navy
+     undertone (not desaturated gray) for the "deep navy, not flat
+     black" brief. Never pure #000 — same rule as v1, still holds. */
+  --graphite-0: #ffffff;
+  --graphite-50: #eef0f4;
+  --graphite-100: #d7dbe5;
+  --graphite-200: #aeb6c7;
+  --graphite-300: #8891a8;
+  --graphite-400: #6b7690;
+  --graphite-500: #4a5468;
+  --graphite-600: #2f3648;
+  --graphite-700: #1f2536;
+  --graphite-800: #161b29;
+  --graphite-900: #0b0e16;
+  --graphite-950: #05060b;
+
+  /* Ultramarine (primary) — v2: re-tuned toward a more saturated,
+     "electric" signal blue (brief: "electric blue as the primary
+     accent"), while staying in the blue family — no cyan/magenta
+     shift, which is what would tip this into cyberpunk territory. */
+  --ultramarine-50: #eaf0ff;
+  --ultramarine-100: #d2ddff;
+  --ultramarine-200: #a7bcff;
+  --ultramarine-300: #7d97ff;
+  --ultramarine-400: #5b7bff;
+  --ultramarine-500: #3d63ff;
+  --ultramarine-600: #2c49e0;
+  --ultramarine-700: #2138b3;
+  --ultramarine-800: #1c2f8c;
+  --ultramarine-900: #17266b;
+
+  /* Brass — demoted from "secondary accent" to a rare, optional
+     highlight (the brief asks for ONE primary accent, electric blue;
+     a second competing accent dilutes that). Kept only for a status
+     use (e.g. a "premium/featured" marker), not for general UI. */
+  --brass-100: #f5e6c8;
+  --brass-400: #d6a94f;
+  --brass-500: #bf8f30;
+  --brass-700: #8c6821;
+
+  /* Semantic status */
+  --success-100: #dbf3e6;
+  --success-500: #1e9e64;
+  --warning-100: #f7e7d0;
+  --warning-500: #c97a1e;
+  --danger-100: #fad9d9;
+  --danger-500: #d13b3b;
+
+  /* Spacing (4pt base grid) */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Radius — unchanged. The brief says "no excessive rounded cards",
+     not "no radius" — radius-md stays the workhorse default. */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadow (elevation) — deepened/darkened for a dark-first surface
+     stack, where a light-mode-tuned shadow all but disappears. */
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.24);
+  --shadow-sm:
+    0 1px 3px rgb(0 0 0 / 0.32),
+    0 1px 2px rgb(0 0 0 / 0.24);
+  --shadow-md:
+    0 4px 12px rgb(0 0 0 / 0.36),
+    0 2px 6px rgb(0 0 0 / 0.24);
+  --shadow-lg:
+    0 16px 32px rgb(0 0 0 / 0.4),
+    0 6px 12px rgb(0 0 0 / 0.28);
+  --shadow-xl: 0 32px 64px rgb(0 0 0 / 0.48);
+
+  /* Glow — NEW in v2. A restrained, tokenized glow so "subtle glow"
+     stays subtle by construction: every glow in the product reads
+     from one of these three, never a one-off box-shadow tuned by
+     eye in a component file. Used on: primary CTA hover/focus, the
+     Hero visualization's "active" nodes, and nowhere else by
+     default — glow marks something as live/active, not decoration. */
+  --glow-primary-sm: 0 0 12px rgb(61 99 255 / 0.28);
+  --glow-primary-md: 0 0 28px rgb(61 99 255 / 0.32), 0 0 8px rgb(61 99 255 / 0.4);
+  --glow-primary-lg: 0 0 64px rgb(61 99 255 / 0.28), 0 0 16px rgb(61 99 255 / 0.35);
+
+  /* Glass — NEW in v2. Reserved for the Hero product visualization's
+     floating surfaces (the one place the brief explicitly asks for
+     glass) — not a general card treatment. `--glass-blur` is a
+     `backdrop-filter: blur()` value, applied only alongside
+     `--glass-bg`/`--glass-border` together, never blur alone. */
+  --glass-bg: rgb(22 27 41 / 0.55);
+  --glass-border: rgb(255 255 255 / 0.08);
+  --glass-highlight: rgb(255 255 255 / 0.06);
+  --glass-blur: 20px;
+
+  /* Motion */
+  --motion-instant: 100ms;
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-moderate: 300ms;
+  --motion-slow: 450ms;
+  /* NEW in v2 — scroll-driven reveals and the Hero visualization's
+     data-flow animations read from this, not an ad hoc duration per
+     component (brief: cinematic scroll reveals, parallax, product
+     zoom — all need a slower, deliberate tier `--motion-slow` (450ms)
+     wasn't built for). */
+  --motion-cinematic: 700ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-emphasis: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Typography scale (Design System §3.2) — v2 adds `display-xl` for
+     hero-scale cinematic headlines; existing steps unchanged so
+     every non-Hero heading is untouched by this pass. */
+  --font-display-xl-size: 72px;
+  --font-display-xl-line: 78px;
+  --font-display-lg-size: 56px;
+  --font-display-lg-line: 64px;
+  --font-display-md-size: 40px;
+  --font-display-md-line: 48px;
+  --font-heading-lg-size: 32px;
+  --font-heading-lg-line: 40px;
+  --font-heading-md-size: 24px;
+  --font-heading-md-line: 32px;
+  --font-heading-sm-size: 20px;
+  --font-heading-sm-line: 28px;
+  --font-body-lg-size: 16px;
+  --font-body-lg-line: 24px;
+  --font-body-md-size: 14px;
+  --font-body-md-line: 20px;
+  --font-caption-size: 12px;
+  --font-caption-line: 16px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. SEMANTIC (ALIAS) LAYER — context/meaning, theme-aware           */
+/* v2: dark is the DEFAULT under `:root`; light is the override.      */
+/* ------------------------------------------------------------------ */
+:root {
+  --color-bg-app: var(--graphite-900);
+  --color-bg-surface: var(--graphite-800);
+  --color-bg-surface-raised: var(--graphite-800);
+  --color-border-default: var(--graphite-700);
+  --color-border-strong: var(--graphite-600);
+  --color-text-primary: var(--graphite-50);
+  --color-text-secondary: var(--graphite-300);
+  --color-text-disabled: var(--graphite-500);
+  --color-hover: var(--graphite-700);
+  --color-pressed: var(--graphite-600);
+  --color-brand-primary: var(--ultramarine-500);
+  --color-brand-primary-hover: var(--ultramarine-400);
+  --color-brand-primary-pressed: var(--ultramarine-300);
+  --color-brand-accent: var(--brass-500);
+  --color-focus-ring: var(--ultramarine-400);
+  --color-disabled-bg: var(--graphite-800);
+  --color-overlay: rgb(2 3 6 / 0.72);
+  --color-skeleton-base: var(--graphite-800);
+  --color-skeleton-shimmer: var(--graphite-700);
+  --color-divider: var(--graphite-700);
+
+  --color-success: var(--success-500);
+  --color-success-bg: var(--success-100);
+  --color-warning: var(--warning-500);
+  --color-warning-bg: var(--warning-100);
+  --color-danger: var(--danger-500);
+  --color-danger-bg: var(--danger-100);
+  --color-info: var(--ultramarine-500);
+}
+
+[data-theme="light"] {
+  --color-bg-app: var(--graphite-50);
+  --color-bg-surface: var(--graphite-0);
+  --color-bg-surface-raised: var(--graphite-0);
+  --color-border-default: var(--graphite-200);
+  --color-border-strong: var(--graphite-300);
+  --color-text-primary: var(--graphite-800);
+  --color-text-secondary: var(--graphite-500);
+  --color-text-disabled: var(--graphite-400);
+  --color-hover: var(--graphite-100);
+  --color-pressed: var(--graphite-200);
+  --color-brand-primary-hover: var(--ultramarine-600);
+  --color-brand-primary-pressed: var(--ultramarine-700);
+  --color-focus-ring: var(--ultramarine-500);
+  --color-disabled-bg: var(--graphite-100);
+  --color-overlay: rgb(14 17 22 / 0.5);
+  --color-skeleton-base: var(--graphite-100);
+  --color-skeleton-shimmer: var(--graphite-50);
+  --color-divider: var(--graphite-200);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. COMPONENT LAYER — specific usage, never referenced by primitives*/
+/* ------------------------------------------------------------------ */
+:root {
+  --sidebar-bg: var(--graphite-950);
+  --nav-bg: var(--color-bg-surface);
+  --card-bg: var(--color-bg-surface-raised);
+  --card-border: var(--color-border-default);
+  --card-radius: var(--radius-md);
+  --card-shadow: var(--shadow-sm);
+  --input-border: var(--color-border-default);
+  --input-border-focus: var(--color-focus-ring);
+  --input-radius: var(--radius-md);
+  --button-primary-bg: var(--color-brand-primary);
+  --button-primary-bg-hover: var(--color-brand-primary-hover);
+  --button-primary-bg-pressed: var(--color-brand-primary-pressed);
+  --button-primary-glow: var(--glow-primary-sm);
+  --button-radius: var(--radius-md);
+  --tooltip-bg: var(--graphite-950);
+  --modal-bg: var(--color-bg-surface-raised);
+  --modal-overlay: var(--color-overlay);
+  --modal-radius: var(--radius-lg);
+  --dropdown-bg: var(--color-bg-surface-raised);
+  --dropdown-shadow: var(--shadow-md);
+}
+
+[data-theme="light"] {
+  --sidebar-bg: var(--graphite-900);
+  --tooltip-bg: var(--graphite-800);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3b. SHADCN/UI COMPATIBILITY BRIDGE                                  */
+/* shadcn's CLI generates primitives against a fixed variable naming  */
+/* (--background, --primary, --ring, etc.). Rather than hand-editing  */
+/* every generated component after each `shadcn add`, we alias their  */
+/* expected names onto Axioma's own semantic tokens once, here. A     */
+/* generated Button or Dialog therefore already speaks Axioma's       */
+/* theme without modification — never add a raw value on this side,   */
+/* only aliases to tokens already defined above.                      */
+/* ------------------------------------------------------------------ */
+:root {
+  --background: var(--color-bg-app);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-bg-surface-raised);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--dropdown-bg);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-brand-primary);
+  --primary-foreground: var(--graphite-0);
+  --secondary: var(--graphite-700);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--graphite-700);
+  --muted-foreground: var(--color-text-secondary);
+  --accent: var(--color-brand-accent);
+  --accent-foreground: var(--graphite-950);
+  --destructive: var(--color-danger);
+  --destructive-foreground: var(--graphite-0);
+  --border: var(--color-border-default);
+  --input: var(--input-border);
+  --ring: var(--color-focus-ring);
+  --radius: var(--radius-md);
+}
+
+[data-theme="light"] {
+  --secondary: var(--graphite-100);
+  --muted: var(--graphite-100);
+  --primary-foreground: var(--graphite-0);
+  --accent-foreground: var(--graphite-0);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. TAILWIND v4 THEME BRIDGE                                        */
+/* Exposes semantic/primitive tokens as Tailwind utilities             */
+/* (bg-app, text-primary, border-default, etc.) without re-declaring  */
+/* raw values — every utility resolves back to the CSS variables      */
+/* above, so theming stays a single source of truth.                  */
+/* ------------------------------------------------------------------ */
+@theme inline {
+  --color-bg-app: var(--color-bg-app);
+  --color-bg-surface: var(--color-bg-surface);
+  --color-bg-surface-raised: var(--color-bg-surface-raised);
+  --color-border-default: var(--color-border-default);
+  --color-border-strong: var(--color-border-strong);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-disabled: var(--color-text-disabled);
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-accent: var(--color-brand-accent);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-info: var(--color-info);
+
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}

@@ -1,0 +1,3 @@
+# shadcn/ui-generated primitives land here via the CLI
+# (components.json aliases.ui -> @/components/ui). Never hand-edited
+# for one-off cases — extend via composition in src/features instead.

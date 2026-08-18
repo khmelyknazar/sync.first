@@ -1,0 +1,2 @@
+# Shared TypeScript types/interfaces not co-located with a
+# feature (e.g. API response shapes from @axioma/core-sdk).

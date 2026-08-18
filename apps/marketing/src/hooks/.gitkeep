@@ -1,0 +1,3 @@
+# Reusable client-side hooks shared across features/routes
+# (e.g. useReducedMotion, useMediaQuery). Empty until a real second
+# consumer justifies extracting one — see packages/utils rationale.

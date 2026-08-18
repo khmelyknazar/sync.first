@@ -1,0 +1,16 @@
+{
+  "name": "@axioma/design-system",
+  "private": true,
+  "version": "0.0.0",
+  "sideEffects": ["./tokens/*.css"],
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.4"
+  },
+  "exports": {
+    "./tokens.css": "./tokens/tokens.css",
+    "./tokens": "./tokens/index.ts",
+    "./motion": "./lib/motion.ts",
+    "./cn": "./lib/cn.ts"
+  }
+}

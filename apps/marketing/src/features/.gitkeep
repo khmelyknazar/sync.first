@@ -1,0 +1,3 @@
+# Feature-based modules go here (e.g. lead-capture/, pricing-table/).
+# Each feature owns its components, hooks, and logic that don't belong
+# in a route file. Nothing lives here yet — no pages exist yet (Stage 1).

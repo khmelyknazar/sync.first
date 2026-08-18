@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import "@axioma/design-system/tokens.css";
+
+/* Base element resets that depend on tokens (kept minimal —
+   Tailwind's preflight already handles the rest). */
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--color-bg-app);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  ::selection {
+    background-color: var(--ultramarine-200);
+    color: var(--graphite-900);
+  }
+
+  /* Visible focus ring per Design System §13 — never `outline: none`
+     without this replacement. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Global reduced-motion contract — decorative motion and page
+   transitions are disabled entirely; essential state-change opacity
+   feedback remains (Design System §8.4). Component-level Motion
+   variants branch through `useReducedMotion` for JS-driven animation;
+   this covers CSS-driven transitions/animations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
